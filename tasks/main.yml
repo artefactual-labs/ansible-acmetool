@@ -6,5 +6,55 @@
     update_cache: "yes"
 
 - apt:
-    name: "acmetool"    
+    name: "acmetool"
     state: "latest"
+
+- name: "create dir for response file"
+  file:
+    name: "/var/lib/acme/conf"
+    state: "directory"
+
+- name: "copy response file"
+  template:
+    src: "response-file.yml.j2"
+    dest: "/var/lib/acme/conf/responses"
+
+# Configuring web server. Assuming acmetool to be in proxy mode
+# ref https://hlandau.github.io/acme/userguide#challenge-completion-philosophy
+# also currently assuming apache
+# (TODO: nginx)
+
+- name: "enable apache2 mod_proxy and mod_proxy_http"
+  apache2_module:
+    state: "present"
+    name: "{{ item }}"
+  with_items:
+    - "proxy"
+    - "proxy_http"
+  notify: "restart apache2"
+
+- name: "add proxypass config to apache"
+  template:
+    src: "apache2-proxypass.conf.j2"
+    dest: "/etc/apache2/conf-available/acmetool.conf"
+  notify: "restart apache2"
+
+- name: "enable apache2 proxypass config"
+  file:
+    src: /etc/apache2/conf-available/acmetool.conf
+    dest: /etc/apache2/conf-enabled/acmetool.conf
+    state: "link"
+  notify: "restart apache2"
+
+# restart done here instead of handler to enforce restart before using acmetool
+- name: "restart apache2"
+  service:
+    name: "apache2"
+    state: "restarted"
+  ignore_errors: "true"
+
+- name: "acmetool: quickstart"
+  command: "acmetool quickstart"
+
+- name: "acmetool: want"
+  command: "acmetool want {{ letsencrypt_acmetool_want }}"
