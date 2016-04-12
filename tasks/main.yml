@@ -1,0 +1,10 @@
+---
+# tasks file for letsencrypt
+
+- apt_repository:
+    repo: "ppa:hlandau/rhea"
+    update_cache: "yes"
+
+- apt:
+    name: "acmetool"    
+    state: "latest"
