@@ -1,0 +1,16 @@
+---
+# defaults file for letsencrypt
+
+# TODO: webserver (apache or nginx)
+# letsencrypt_websrv: "apache"
+
+# acmetool response file
+letsencrypt_acmetool_email: "hostmaster@example.com"
+letsencrypt_acmetool_method: "proxy"
+letsencrypt_acmetool_install_cronjob: "true"
+letsencrypt_acmetool_install_haproxy_script: "false"
+letsencrypt_acmetool_install_redirector_systemd: "false"
+
+# acmetool cert hostname
+# for multiple sites with one cert, separate site names with a space
+letsencrypt_acmetool_want: "example.com www.example.com"
