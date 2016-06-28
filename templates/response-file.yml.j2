@@ -7,16 +7,16 @@
 # You will typically want to use --response-file with --stdio or --batch.
 # For dialogs not requiring a response, but merely acknowledgement, specify true.
 # This file is YAML. Note that JSON is a subset of YAML.
-"acme-enter-email": {{ letsencrypt_acmetool_email }}
+"acme-enter-email": {{ acmetool_responses_email }}
 "acme-agreement:https://letsencrypt.org/documents/LE-SA-v1.0.1-July-27-2015.pdf": true
 "acmetool-quickstart-choose-server": https://acme-v01.api.letsencrypt.org/directory
-"acmetool-quickstart-choose-method": {{ letsencrypt_acmetool_method }}
+"acmetool-quickstart-choose-method": {{ acmetool_responses_method }}
 # This is only used if "acmetool-quickstart-choose-method" is "webroot".
 "acmetool-quickstart-webroot-path": "/var/www/foo/bar/.well-known/acme-challenge"
 "acmetool-quickstart-complete": true
-"acmetool-quickstart-install-cronjob": {{ letsencrypt_acmetool_install_cronjob }}
-"acmetool-quickstart-install-haproxy-script": {{ letsencrypt_acmetool_install_haproxy_script }}
-"acmetool-quickstart-install-redirector-systemd": {{ letsencrypt_acmetool_install_redirector_systemd }}
+"acmetool-quickstart-install-cronjob": {{ acmetool_responses_install_cronjob }}
+"acmetool-quickstart-install-haproxy-script": {{ acmetool_responses_haproxy_script }}
+"acmetool-quickstart-install-redirector-systemd": {{ acmetool_responses_redirector_systemd }}
 "acmetool-quickstart-key-type": ecdsa
 "acmetool-quickstart-rsa-key-size": 4096
 "acmetool-quickstart-ecdsa-curve": nistp256
