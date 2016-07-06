@@ -1,0 +1,21 @@
+---
+- name: "get account-thumbprint with acmetool"
+  command: "acmetool account-thumbprint"
+  register: cmdoutput
+
+- set_fact:
+    thumbprint: "{{ cmdoutput.stdout.split()[0] }}"
+
+- name: "template acmetool nginx location file"
+  template:
+    src: "etc_nginx_acmetool-location.conf.j2"
+    dest: "/etc/nginx/acmetool-location.conf"
+
+- name: "pause for user confirmation"
+  pause:
+    prompt: "Please include /etc/nginx/acmetool-location.conf; in your nginx site configuration and press enter to continue"
+
+- name: "reload nginx"
+  service:
+    name: "nginx"
+    state: "reloaded"

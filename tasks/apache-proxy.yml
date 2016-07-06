@@ -1,0 +1,26 @@
+---
+- name: "enable apache2 mod_proxy and mod_proxy_http"
+  apache2_module:
+    state: "present"
+    name: "{{ item }}"
+  with_items:
+    - "proxy"
+    - "proxy_http"
+
+- name: "add proxypass config to apache"
+  template:
+    src: "apache2-proxypass.conf.j2"
+    dest: "/etc/apache2/conf-available/acmetool.conf"
+
+- name: "enable apache2 proxypass config"
+  file:
+    src: /etc/apache2/conf-available/acmetool.conf
+    dest: /etc/apache2/conf-enabled/acmetool.conf
+    state: "link"
+
+# restart done here instead of handler to enforce restart before using acmetool
+- name: "restart apache2"
+  service:
+    name: "apache2"
+    state: "restarted"
+  ignore_errors: "true"
