@@ -10,11 +10,11 @@ acmetool is used in proxy mode for apache, and stateless mode for nginx
 Requirements
 ------------
 - OS: ubuntu 14.04 (it may work on others but not tested yet )
-- web server: apache or nginx already installed and the non-encrypted site config working.
+- web server: apache or nginx
 
 Example Playbook
 ----------------
-
+```yaml
     - hosts: servers
       roles:
         - { role: "ansible-acmetool", become: "yes" }
@@ -22,15 +22,31 @@ Example Playbook
         acmetool_websrv: "nginx"
         acmetool_responses_email: "name@example.com"
         acmetool_want: "www.example.com"    
+```
 
 This will install acmetool to validate using nginx stateless mode, and then will run `acmetool want www.example.com` to get the certs and private key for the site `www.example.com`, which will be available to use by the web server at `/var/lib/acme/live/www.example.com`
 
 Notes:
 -----
 
-1) This ansible role only deals with installing and running acmetool and getting the certs. You need to separately configure the web server (apache or nginx) to enable https and to use the obtained certificates.
+1) This ansible role only deals with installing and running acmetool and getting the certs. You need to separately configure your web server to enable https for your site and to use the obtained certificates.
 
-2) When used to work with nginx stateless mode, the role will pause to allow the user to edit the nginx site configuration to include a file containing a location for the stateless ACME challenge (this is done as we haven't found a reliable way to modify the site configuration for all the possible cases). Just add `include /etc/nginx/acmetool-location.conf;` inside the server block along the other location definitions:
+2) In case multiple certs are required define `acmetool_want` as a list (one list item per cert). In case a cert is required for multiple sites, create one item with the site names separated by a space. Example:
+
+    ```yaml
+    acmetool_want:
+      - "www.example.com example.com"
+      - "www.mysite.com"
+    ```
+
+This will get a cert valid for www.example.com and example.com and another cert valid for www.mysite.com
+
+Notes for nginx stateless mode:
+------------------------------
+
+1) This role will add and temporarily enable configuration for a site to get the initial LE certificate (the site is disabled by the role after getting the certs, the configuration file is kept for reference in the directory `/etc/nginx/sites-available/`)
+
+2) The role creates file `/etc/nginx/acmetool-location.conf`, with configuration for a stateless ACME challenge location. Include this file in your site configuration, inside the server block along the other location definitions, in order for automated cert renewal to work, for example like this:
 
 ```
 server {
@@ -49,13 +65,6 @@ server {
 ...
 ```
 
-3) In case multiple certs are required define `acmetool_want` as a list (one list item per cert). In case a cert is required for multiple sites, create one item with the site names separated by a space. Example:
-
-      acmetool_want:
-        - "www.example.com example.com"
-        - "www.mysite.com"
-
-This will get a cert valid for www.example.com and example.com and another cert valid for www.mysite.com
 
 License
 -------

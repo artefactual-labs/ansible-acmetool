@@ -57,3 +57,8 @@
   command: "acmetool want {{ item }}"
   with_items: "{{ acmetool_want }}"
   tags: acmetool-websrv
+
+- name: "nginx specific config tasks after getting certs"
+  include: "nginx-stateless-disable-temp-site.yml"
+  when: acmetool_websrv == "nginx"
+  tags: acmetool-websrv

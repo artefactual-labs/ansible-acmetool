@@ -14,3 +14,6 @@ acmetool_responses_install_redirector_systemd: "false"
 # for multiple sites with one cert, separate site names with a space
 # acmetool_want: "example.com www.example.com"
 # (not providing a default; shall be defined in the playbook or host_vars)
+
+# nginx temp sites file for pulling initial certificates
+acmetool_nginx_sites_filename: "00-acmetool.conf"

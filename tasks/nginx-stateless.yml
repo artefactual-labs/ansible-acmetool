@@ -11,9 +11,16 @@
     src: "etc_nginx_acmetool-location.conf.j2"
     dest: "/etc/nginx/acmetool-location.conf"
 
-- name: "pause for user confirmation"
-  pause:
-    prompt: "Please include /etc/nginx/acmetool-location.conf; in your nginx site configuration and press enter to continue"
+- name: "template acmetool nginx temporary site"
+  template:
+    src: "etc_nginx_sites_acmetool.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ acmetool_nginx_sites_filename }}"
+
+- name: "enable acmetool nginx temporary site"
+  file:
+    src: "/etc/nginx/sites-available/{{ acmetool_nginx_sites_filename }}"
+    dest: "/etc/nginx/sites-enabled/{{ acmetool_nginx_sites_filename }}"
+    state: "link"
 
 - name: "reload nginx"
   service:
