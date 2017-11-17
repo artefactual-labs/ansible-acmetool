@@ -24,6 +24,7 @@
   tags:
     - acmetool-install
     - acmetool-websrv
+    - acmetool-update-response-file
 
 - set_fact:
     acmetool_responses_method: "proxy"
@@ -31,12 +32,15 @@
   tags:
     - acmetool-install
     - acmetool-websrv
+    - acmetool-update-response-file
 
 - name: "copy response file"
   template:
     src: "response-file.yml.j2"
     dest: "/var/lib/acme/conf/responses"
-  tags: acmetool-install
+  tags: 
+    - acmetool-install
+    - acmetool-update-response-file
 
 - name: "acmetool: quickstart"
   command: "acmetool quickstart"
