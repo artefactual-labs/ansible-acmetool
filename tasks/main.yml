@@ -34,6 +34,9 @@
     - acmetool-websrv
     - acmetool-update-response-file
 
+- set_fact:
+    acmetool_letsencrypt_environment: "{{ 'https://acme-staging.api.letsencrypt.org/directory' if acmetool_staging else 'https://acme-v01.api.letsencrypt.org/directory' }}"
+
 - name: "copy response file"
   template:
     src: "response-file.yml.j2"
