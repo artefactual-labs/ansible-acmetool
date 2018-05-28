@@ -1,15 +1,35 @@
 ---
 # tasks file for ansible-acmetool
 
-- apt_repository:
+- name: Add Ubuntu repo
+  apt_repository:
     repo: "ppa:hlandau/rhea"
     update_cache: "yes"
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_os_family == "Debian"
   tags: acmetool-install
 
-- apt:
+- name: Install acmetool package (Ubuntu)
+  apt:
     name: "acmetool"
     state: "latest"
+  when: ansible_os_family == "Debian"
+  tags: acmetool-install
+
+- name: Add RedHat/CentOS repo file
+  template:
+    src: "acmetool_centos7.repo.j2"
+    dest: "/etc/yum.repos.d/acmetool.repo"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when: ansible_os_family == "RedHat"
+  tags: acmetool-install
+
+- name: Install acmetool package (RH/CentOS)
+  yum:
+    name: "acmetool"
+    state: "latest"
+  when: ansible_os_family == "RedHat"
   tags: acmetool-install
 
 - name: "create dir for response file"
