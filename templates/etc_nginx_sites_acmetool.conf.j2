@@ -5,7 +5,8 @@
 
 server {
 	listen 80 default_server;
-	listen [::]:80 default_server ipv6only=on;
+	# commenting out the line below due to errors on systems without IPv6 support
+	#listen [::]:80 default_server ipv6only=on;
 
 	root /usr/share/nginx/html;
 	index index.html index.htm;

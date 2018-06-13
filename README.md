@@ -9,7 +9,7 @@ acmetool is used in proxy mode for apache, and stateless mode for nginx
 
 Requirements
 ------------
-- OS: ubuntu 14.04 (it may work on others but not tested yet )
+- OS: ubuntu 14.04/16.04, Red Hat/CentOS 7
 - web server: apache or nginx
 
 Example Playbook
