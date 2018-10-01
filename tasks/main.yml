@@ -5,6 +5,7 @@
   apt_repository:
     repo: "ppa:hlandau/rhea"
     update_cache: "yes"
+    codename: xenial
   when: ansible_os_family == "Debian"
   tags: acmetool-install
 
