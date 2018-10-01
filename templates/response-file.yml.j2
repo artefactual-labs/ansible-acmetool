@@ -12,7 +12,7 @@
 "acmetool-quickstart-choose-server": https://acme-v01.api.letsencrypt.org/directory
 "acmetool-quickstart-choose-method": {{ acmetool_responses_method }}
 # This is only used if "acmetool-quickstart-choose-method" is "webroot".
-"acmetool-quickstart-webroot-path": "/var/www/foo/bar/.well-known/acme-challenge"
+"acmetool-quickstart-webroot-path": {{ acmetool_responses_webroot_path }}
 "acmetool-quickstart-complete": true
 "acmetool-quickstart-install-cronjob": {{ acmetool_responses_install_cronjob }}
 "acmetool-quickstart-install-haproxy-script": {{ acmetool_responses_install_haproxy_script }}
