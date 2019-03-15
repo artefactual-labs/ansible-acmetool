@@ -5,6 +5,10 @@
 
 - set_fact:
     thumbprint: "{{ cmdoutput.stdout.split()[0] }}"
+- name: "Create nginx folder"
+  file:
+    path: "/etc/nginx"
+    state: "directory"
 
 - name: "template acmetool nginx location file"
   template:
@@ -15,16 +19,24 @@
   template:
     src: "etc_nginx_sites_acmetool.conf.j2"
     dest: "/etc/nginx/sites-available/{{ acmetool_nginx_sites_filename }}"
-  when: acmetool_nginx_sites_filename != ""
+  when:
+    - acmetool_nginx_sites_filename != ""
+    - acmetool_want is defined
 
 - name: "enable acmetool nginx temporary site"
   file:
     src: "/etc/nginx/sites-available/{{ acmetool_nginx_sites_filename }}"
     dest: "/etc/nginx/sites-enabled/{{ acmetool_nginx_sites_filename }}"
     state: "link"
-  when: acmetool_nginx_sites_filename != ""
+  when:
+    - acmetool_nginx_sites_filename != ""
+    - acmetool_want is defined
 
 - name: "reload nginx"
   service:
     name: "nginx"
     state: "reloaded"
+  when:
+    - acmetool_want is defined
+
+
