@@ -39,9 +39,34 @@
     state: "directory"
   tags: acmetool-install
 
+- name: "Get the version of the installed acmetool package (RH/CentOS)"
+  shell: rpm -qa --queryformat '%{version}' acmetool
+  args:
+    warn: false
+  register: acmetool_version_centos
+  when: ansible_os_family == "RedHat"
+  tags: acmetool-install
+
+- name: "Get the version of the installed acmetool package (Debian)"
+  shell: dpkg-query -f='${Version}' -W 'acmetool' | sed 's/-.*$//'
+  register: acmetool_version_ubuntu
+  when: ansible_os_family == "Debian"
+  tags: acmetool-install
+
+- set_fact:
+    installed_acmetool_version: >
+      "{{ acmetool_version_centos.stdout |
+      default(acmetool_version_ubuntu.stdout) }}"
+  tags: acmetool-install
+
+- name: "Install acmetool v0.2 workaround (RH/CentOS)"
+  include_tasks: "build-binary-v0.2.yml"
+  when: installed_acmetool_version is version('0.2.0', '<')
+  tags: acmetool-install
+
 - set_fact:
     acmetool_responses_method: "stateless"
-  when:  acmetool_websrv == "nginx"
+  when: acmetool_websrv == "nginx"
   tags:
     - acmetool-install
     - acmetool-websrv
@@ -49,7 +74,7 @@
 
 - set_fact:
     acmetool_responses_method: "proxy"
-  when:  acmetool_websrv == "apache"
+  when: acmetool_websrv == "apache"
   tags:
     - acmetool-install
     - acmetool-websrv
@@ -59,7 +84,7 @@
   template:
     src: "response-file.yml.j2"
     dest: "/var/lib/acme/conf/responses"
-  tags: 
+  tags:
     - acmetool-install
     - acmetool-update-response-file
 
@@ -88,5 +113,5 @@
   include: "nginx-stateless-disable-temp-site.yml"
   tags: acmetool-websrv
   when:
-   - acmetool_want is defined
-   - acmetool_websrv == "nginx"
+    - acmetool_want is defined
+    - acmetool_websrv == "nginx"
