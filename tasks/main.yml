@@ -1,12 +1,32 @@
 ---
 # tasks file for ansible-acmetool
 
-- name: Add Ubuntu repo
+- name: Add Artefactual repo key (Ubuntu)
+  apt_key:
+    url: "https://packages.archivematica.org/acmetool/key.asc"
+    state: present
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_distribution_version is version('18.04', '<=')
+  tags: acmetool-install
+
+- name: Add Ubuntu repo (version <= 16.04)
   apt_repository:
-    repo: "ppa:hlandau/rhea"
+    repo: "deb [arch=amd64] http://packages.archivematica.org/acmetool/ubuntu xenial main"
     update_cache: "yes"
-    codename: xenial
-  when: ansible_os_family == "Debian"
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_distribution_version is version('16.04', '<=')
+  tags: acmetool-install
+
+# Ubuntu focal (20.04) includes acmetool in official repositories
+- name: Add Ubuntu repo (version = 18.04)
+  apt_repository:
+    repo: "deb [arch=amd64] http://packages.archivematica.org/acmetool/ubuntu bionic main"
+    update_cache: "yes"
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_distribution_version is version('18.04', '==')
   tags: acmetool-install
 
 - name: Install acmetool package (Ubuntu)
@@ -19,7 +39,7 @@
 - name: Add RedHat/CentOS repo file
   template:
     src: "acmetool_centos7.repo.j2"
-    dest: "/etc/yum.repos.d/acmetool.repo"
+    dest: "/etc/yum.repos.d/artefactual-acmetool.repo"
     owner: "root"
     group: "root"
     mode: "0644"
