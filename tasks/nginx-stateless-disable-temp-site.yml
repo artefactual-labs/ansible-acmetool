@@ -1,10 +1,17 @@
 ---
 
 - name: "disable acmetool nginx temporary site"
-  file:
-    name: "/etc/nginx/sites-enabled/{{ acmetool_nginx_sites_filename }}"
-    state: "absent"
+  command:
+    cmd: "mv -f {{ acmetool_nginx_sites_filename }} {{ acmetool_nginx_sites_filename }}.org"
+    chdir: "/etc/nginx/conf.d"
+    removes: "{{ acmetool_nginx_sites_filename }}"
+
+- name: "reload nginx"
+  service:
+    name: "nginx"
+    state: "reloaded"
 
 - name: "Remind user to update their site config"
   debug:
     msg: "Please add 'include /etc/nginx/acmetool-location.conf;' in your nginx site configuration for future cert renewal to work"
+

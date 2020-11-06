@@ -15,19 +15,10 @@
     src: "etc_nginx_acmetool-location.conf.j2"
     dest: "/etc/nginx/acmetool-location.conf"
 
-- name: "template acmetool nginx temporary site"
+- name: Add configuration for nginx temporary site from template
   template:
     src: "etc_nginx_sites_acmetool.conf.j2"
-    dest: "/etc/nginx/sites-available/{{ acmetool_nginx_sites_filename }}"
-  when:
-    - acmetool_nginx_sites_filename != ""
-    - acmetool_want is defined
-
-- name: "enable acmetool nginx temporary site"
-  file:
-    src: "/etc/nginx/sites-available/{{ acmetool_nginx_sites_filename }}"
-    dest: "/etc/nginx/sites-enabled/{{ acmetool_nginx_sites_filename }}"
-    state: "link"
+    dest: "/etc/nginx/conf.d/{{ acmetool_nginx_sites_filename }}"
   when:
     - acmetool_nginx_sites_filename != ""
     - acmetool_want is defined

@@ -44,7 +44,7 @@ This will get a cert valid for www.example.com and example.com and another cert 
 Notes for nginx stateless mode:
 ------------------------------
 
-1) This role will add and temporarily enable configuration for a site to get the initial LE certificate (the site is disabled by the role after getting the certs, the configuration file is kept for reference in the directory `/etc/nginx/sites-available/`)
+1) This role will add and temporarily enable configuration for a site to get the initial LE certificate (the site is disabled by the role after getting the certs, the configuration file is kept (disabled) for reference in the directory `/etc/nginx/conf.d/`)
 
 2) The role creates file `/etc/nginx/acmetool-location.conf`, with configuration for a stateless ACME challenge location. Include this file in your site configuration, inside the server block along the other location definitions, in order for automated cert renewal to work, for example like this:
 
