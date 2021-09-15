@@ -4,23 +4,20 @@
 # will be enabled momentarily to get certs and then disabled
 
 server {
-	listen 80 default_server;
-	# commenting out the line below due to errors on systems without IPv6 support
-	#listen [::]:80 default_server ipv6only=on;
+    listen 80;
 
-	root /usr/share/nginx/html;
-	index index.html index.htm;
+    root /usr/share/nginx/html;
+    index index.html index.htm;
 
-	# Make site accessible from http://localhost/
-	server_name localhost;
+    server_name {{ fact_nginx_server_name }};
 
     include /etc/nginx/acmetool-location.conf;    
 
-	location / {
-		# First attempt to serve request as file, then
-		# as directory, then fall back to displaying a 404.
-		try_files $uri $uri/ =404;
-	}
+    location / {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to displaying a 404.
+        try_files $uri $uri/ =404;
+    }
 
 }
 

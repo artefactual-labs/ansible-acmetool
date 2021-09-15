@@ -16,9 +16,18 @@
     dest: "/etc/nginx/acmetool-location.conf"
 
 - name: Add configuration for nginx temporary site from template
-  template:
-    src: "etc_nginx_sites_acmetool.conf.j2"
-    dest: "/etc/nginx/conf.d/{{ acmetool_nginx_sites_filename }}"
+  block:
+    # (initially tried to use a plain {{ acmetool_want|join(' ') }} to make the 
+    # nginx config's server_name, but it didn't work when acmetool_want 
+    # is a single string)
+    - set_fact:
+        fact_nginx_server_name: ""
+    - set_fact:
+        fact_nginx_server_name: "{{ fact_nginx_server_name }} {{ item }}"
+      with_items: "{{ acmetool_want }}"
+    - template:
+        src: "etc_nginx_sites_acmetool.conf.j2"
+        dest: "/etc/nginx/conf.d/{{ acmetool_nginx_sites_filename }}"
   when:
     - acmetool_nginx_sites_filename != ""
     - acmetool_want is defined
