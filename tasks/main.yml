@@ -36,21 +36,38 @@
   when: ansible_os_family == "Debian"
   tags: acmetool-install
 
-- name: Add RedHat/CentOS repo file
+- name: Add RedHat/CentOS/Rocky 7 repo file
   template:
     src: "acmetool_centos7.repo.j2"
     dest: "/etc/yum.repos.d/artefactual-acmetool.repo"
     owner: "root"
     group: "root"
     mode: "0644"
-  when: ansible_os_family == "RedHat"
+  when:
+    - ansible_os_family in ['RedHat','Rocky']
+    - ansible_facts['distribution_major_version'] <= "7"
+    - install_rpm_repositories|bool
   tags: acmetool-install
 
-- name: Install acmetool package (RH/CentOS)
+- name: Add RedHat/CentOS/Rocky >=8 repo file
+  template:
+    src: "acmetool_rocky.repo.j2"
+    dest: "/etc/yum.repos.d/artefactual-acmetool.repo"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  when:
+    - ansible_os_family in ['RedHat','Rocky']
+    - ansible_facts['distribution_major_version'] >= "7"
+    - install_rpm_repositories|bool
+  tags: acmetool-instal
+
+
+- name: Install acmetool package (RH/CentOS/Rocky)
   yum:
     name: "acmetool"
     state: "latest"
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family in ['RedHat', 'Rocky']
   tags: acmetool-install
 
 - name: "create dir for response file"

@@ -21,3 +21,7 @@ acmetool_responses_webroot_path: "/var/www/foo/bar/.well-known/acme-challenge"  
 
 # nginx temp sites file for pulling initial certificates
 acmetool_nginx_sites_filename: "00-acmetool.conf"
+
+# Change to false if you don't want to install rpm repos
+# Useful in offline or rpm repos controlled environments
+install_rpm_repositories: "true"
