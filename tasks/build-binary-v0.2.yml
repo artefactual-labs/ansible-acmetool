@@ -1,0 +1,53 @@
+---
+- name: "Install packages (Ubuntu)"
+  apt:
+    pkg:
+      - git
+      - golang-go
+      - libcap-dev
+      - make
+    state: latest
+  when: ansible_os_family != "RedHat"
+
+- name: "Install packages (CentOS/RedHat)"
+  yum:
+    name:
+      - git
+      - golang
+      - libcap-devel
+      - make
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- set_fact:
+    acmetool_build_dir: /tmp/acmetool-tmp
+
+- name: "Create build dir"
+  file:
+    path: "{{ acmetool_build_dir }}"
+    state: directory
+
+- name: "Remove old build dir"
+  file:
+    path: "{{ acmetool_build_dir }}/acme"
+    state: absent
+
+- name: "Set git options"
+  command: git config --global http.followRedirects true
+
+- name: "Clone acmetool repository"
+  git:
+    repo: https://github.com/hlandau/acme
+    dest: "{{ acmetool_build_dir }}/acme"
+
+- name: "Build acmetool"
+  make:
+    chdir: "{{ acmetool_build_dir }}/acme"
+
+- name: "Install and backup old binary"
+  copy:
+    remote_src: yes
+    mode: 0755
+    src: "{{ acmetool_build_dir }}/acme/bin/acmetool"
+    dest: /usr/bin/acmetool
+    backup: yes
