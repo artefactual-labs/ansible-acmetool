@@ -127,3 +127,16 @@
   when:
    - acmetool_want is defined
    - acmetool_websrv == "nginx"
+
+- name: "SELinux: set file context to allow nginx access LE cert dir"
+  sefcontext:
+    target: "/var/lib/acme(/.*)?"
+    setype: "httpd_sys_content_t"
+    state: "present"
+  tags: acmetool-selinux
+  when: ansible_selinux.status == "enabled"
+
+- name: "SELinux: apply file context to LE cert dir"
+  command: restorecon -Rv /var/lib/acme
+  tags: acmetool-selinux
+  when: ansible_selinux.status == "enabled"
